@@ -1,6 +1,6 @@
 import React, { useReducer, useEffect } from 'react';
 
-import { validate } from '../../../util/validators';
+import { validate } from '../../../shared/util/validators';
 
 import './Input.css';
 
@@ -11,12 +11,12 @@ const inputReducer = (state, action) => {
       return {
         ...state,
         value: action.val,
-        isValid: validate(action.val, action.validators),
+        isValid: validate(action.val, action.validators)
       };
     case 'TOUCH': {
       return {
         ...state,
-        isTouched: true,
+        isTouched: true
       };
     }
     default:
@@ -26,9 +26,9 @@ const inputReducer = (state, action) => {
 
 const Input = (props) => {
   const [inputState, dispatch] = useReducer(inputReducer, {
-    value: '',
+    value: props.initialValue || '',
     isTouched: false,
-    isValid: false,
+    isValid: props.initalIsValid || false
   });
 
   const { id, onInput } = props;
@@ -42,13 +42,13 @@ const Input = (props) => {
     dispatch({
       type: 'CHANGE',
       val: event.target.value,
-      validators: props.validators,
+      validators: props.validators
     });
   };
 
   const touchHandler = () => {
     dispatch({
-      type: 'TOUCH',
+      type: 'TOUCH'
     });
   };
 
@@ -66,6 +66,7 @@ const Input = (props) => {
       <textarea
         id={props.id}
         rows={props.rows || 3}
+        placeholder={props.placeholder}
         onChange={changeHandler}
         onBlur={touchHandler}
         value={inputState.value}
