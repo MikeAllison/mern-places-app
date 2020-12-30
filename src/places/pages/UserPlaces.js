@@ -13,7 +13,7 @@ const DUMMY_PLACES = [
     address: '20 W 34th St, New York, NY 10001',
     coordinates: {
       lat: 40.7484405,
-      lng: -73.9878531,
+      lng: -73.9878531
     },
     creatorId: 'u1'
   },
@@ -26,15 +26,17 @@ const DUMMY_PLACES = [
     address: '20 W 34th St, New York, NY 10001',
     coordinates: {
       lat: 40.7484405,
-      lng: -73.9878531,
+      lng: -73.9878531
     },
     creatorId: 'u2'
-  },
+  }
 ];
 
 const UserPlaces = () => {
   const userId = useParams().userId;
-  const loadedPlaces = DUMMY_PLACES.filter(place => place.creatorId === userId);
+  const loadedPlaces = DUMMY_PLACES.filter(
+    (place) => place.creatorId === userId
+  );
   return <PlaceList items={loadedPlaces} />;
 };
 
