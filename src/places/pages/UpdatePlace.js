@@ -12,7 +12,7 @@ import {
 import { useForm } from '../../shared/hooks/form-hook';
 import './PlaceForm.css';
 
-const DUMMY_PLACES = [
+const PLACES = [
   {
     id: 'p1',
     title: 'Empire State Building 1',
@@ -24,7 +24,7 @@ const DUMMY_PLACES = [
       lat: 40.7484405,
       lng: -73.9878531
     },
-    creatorId: 'u1'
+    creator: 'u1'
   },
   {
     id: 'p2',
@@ -37,7 +37,7 @@ const DUMMY_PLACES = [
       lat: 40.7484405,
       lng: -73.9878531
     },
-    creatorId: 'u2'
+    creator: 'u2'
   }
 ];
 
@@ -59,7 +59,7 @@ const UpdatePlace = () => {
     false
   );
 
-  const identifiedPlace = DUMMY_PLACES.find((p) => p.id === placeId);
+  const identifiedPlace = PLACES.find((p) => p.id === placeId);
 
   useEffect(() => {
     if (identifiedPlace) {

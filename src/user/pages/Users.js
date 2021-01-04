@@ -6,9 +6,15 @@ const Users = () => {
   const USERS = [
     {
       id: 'u1',
-      image: 'https://www.stevensegallery.com/350/350',
       name: 'User 1',
+      imageUrl: 'https://www.stevensegallery.com/350/350',
       places: 3
+    },
+    {
+      id: 'u2',
+      name: 'User 2',
+      imageUrl: 'https://www.stevensegallery.com/350/350',
+      places: 2
     }
   ];
 
