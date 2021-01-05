@@ -61,6 +61,7 @@ const UpdatePlace = () => {
 
   const identifiedPlace = PLACES.find((p) => p.id === placeId);
 
+  // useEffect - Run once, when this page renders the first time
   useEffect(() => {
     if (identifiedPlace) {
       setFormData(

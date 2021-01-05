@@ -8,20 +8,23 @@ import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
 
 import './Auth.css';
 
+import { AuthContext } from '../../shared/context/auth-context';
+
 import {
   VALIDATOR_REQUIRE,
   VALIDATOR_MINLENGTH,
   VALIDATOR_EMAIL
 } from '../../shared/util/validators';
+
 import { useForm } from '../../shared/hooks/form-hook';
-import { AuthContext } from '../../shared/context/auth-context';
+import { useHttpClient } from '../../shared/hooks/http-hook';
 
 const Auth = () => {
   const auth = useContext(AuthContext);
 
   const [isLoginMode, setIsLoginMode] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState();
+
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
   const [formState, inputChangeHandler, setFormData] = useForm(
     {
@@ -41,43 +44,44 @@ const Auth = () => {
     event.preventDefault();
 
     if (isLoginMode) {
-      const response = await fetch('http://localhost:5000/api/users/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: formState.inputs.email.value,
-          password: formState.inputs.password.value
-        })
-      });
-
-      const responseData = await response.json();
-    } else {
       try {
-        setIsLoading(true);
-
-        const response = await fetch('http://localhost:5000/api/users/signup', {
-          method: 'POST',
-          headers: {
+        const responseData = await sendRequest(
+          'http://localhost:5000/api/users/login',
+          'POST',
+          {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
+          JSON.stringify({
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value
+          })
+        );
+
+        auth.login(responseData.user.id);
+      } catch (err) {
+        // Error is handeled in the sendRequest useHttpClient hook
+        // Could also use a .then() instead of try/catch
+      }
+    } else {
+      // SIGNIN MODE
+      try {
+        const responseData = await sendRequest(
+          'http://localhost:5000/api/users/signup',
+          'POST',
+          {
+            'Content-Type': 'application/json'
+          },
+          JSON.stringify({
             name: formState.inputs.name.value,
             email: formState.inputs.email.value,
             password: formState.inputs.password.value
           })
-        });
+        );
 
-        const responseData = await response.json();
-        if (!response.ok) {
-          throw new Error(responseData.message); // Error will be caught in catch block below
-        }
-        setIsLoading(false);
-        auth.login();
+        auth.login(responseData.user.id);
       } catch (err) {
-        setError(err.message || 'Something went wrong please try again.');
-        setIsLoading(false);
+        // Error is handeled in the sendRequest useHttpClient hook
+        // Could also use a .then() instead of try/catch
       }
     }
   };
@@ -107,14 +111,10 @@ const Auth = () => {
     setIsLoginMode((prevMode) => !prevMode);
   };
 
-  const errorHandler = () => {
-    setError(null);
-  };
-
   return (
     <React.Fragment>
-      {/* Error that is passed is from useState */}
-      <ErrorModal error={error} onClear={errorHandler} />
+      {/* error/clearError passed from useHttpClient */}
+      <ErrorModal error={error} onClear={clearError} />
       <Card className="authentication">
         {isLoading && <LoadingSpinner asOverlay />}
         <h2>{isLoginMode ? 'Login Required' : 'Sign-Up'}</h2>

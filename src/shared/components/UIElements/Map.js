@@ -9,12 +9,12 @@ const Map = (props) => {
   // Extract only the props that are needed
   const { center, zoom } = props;
 
-  // This is required to wait for this compopent to render the map until the DOM is rendered
+  // This is required to wait for this component to render the map until the DOM is rendered
   // Pass extracted props as second arguement
   useEffect(() => {
     const map = new window.google.maps.Map(mapRef.current, {
       center: center,
-      zoom: zoom,
+      zoom: zoom
     });
 
     new window.google.maps.Marker({ position: center, map: map });

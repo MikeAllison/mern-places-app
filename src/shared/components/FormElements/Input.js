@@ -34,6 +34,7 @@ const Input = (props) => {
   const { id, onInput } = props;
   const { value, isValid } = inputState;
 
+  // useEffect - Run once, when this page renders the first time
   useEffect(() => {
     onInput(id, value, isValid);
   }, [id, value, isValid, onInput]);

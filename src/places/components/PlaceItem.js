@@ -9,6 +9,8 @@ import Map from '../../shared/components/UIElements/Map';
 
 import './PlaceItem.css';
 
+import { useHttpClient } from '../../shared/hooks/http-hook';
+
 const PlaceItem = (props) => {
   const auth = useContext(AuthContext);
 
@@ -21,13 +23,24 @@ const PlaceItem = (props) => {
   const showDeleteWarningHandler = () => {
     setShowConfirmModal(true);
   };
+
   const cancelDeleteWarningHandler = () => {
     setShowConfirmModal(false);
   };
 
-  const confirmDeleteHandler = () => {
+  const { sendRequest } = useHttpClient();
+
+  const confirmDeleteHandler = async () => {
+    try {
+      await sendRequest(
+        `http://localhost:5000/api/places/${props.id}`,
+        'DELETE'
+      );
+    } catch (err) {
+      // Error is handeled in the sendRequest useHttpClient hook
+      // Could also use a .then() instead of try/catch
+    }
     setShowConfirmModal(false);
-    console.log('Deleting');
   };
 
   return (

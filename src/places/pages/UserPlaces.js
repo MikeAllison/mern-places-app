@@ -1,41 +1,47 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import PlaceList from '../components/PlaceList';
+import { useHttpClient } from '../../shared/hooks/http-hook';
 
-const PLACES = [
-  {
-    id: 'p1',
-    title: 'Empire State Building 1',
-    description: 'Famous skyscraper',
-    imageUrl:
-      'https://marvel-b1-cdn.bc0a.com/f00000000179470/www.esbnyc.com/sites/default/files/styles/on_single_feature/public/2020-02/Green%20lights.jpg?itok=nRbtw3hG',
-    address: '20 W 34th St, New York, NY 10001',
-    coordinates: {
-      lat: 40.7484405,
-      lng: -73.9878531
-    },
-    creator: 'u1'
-  },
-  {
-    id: 'p2',
-    title: 'Empire State Building 2',
-    description: 'Famous skyscraper',
-    imageUrl:
-      'https://marvel-b1-cdn.bc0a.com/f00000000179470/www.esbnyc.com/sites/default/files/styles/on_single_feature/public/2020-02/Green%20lights.jpg?itok=nRbtw3hG',
-    address: '20 W 34th St, New York, NY 10001',
-    coordinates: {
-      lat: 40.7484405,
-      lng: -73.9878531
-    },
-    creator: 'u2'
-  }
-];
+import PlaceList from '../components/PlaceList';
+import ErrorModal from '../../shared/components/UIElements/ErrorModal';
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
 
 const UserPlaces = () => {
+  const [loadedUserPlaces, setLoadedUserPlaces] = useState([]);
+
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+
   const userId = useParams().userId;
-  const loadedPlaces = PLACES.filter((place) => place.creator === userId);
-  return <PlaceList items={loadedPlaces} />;
+
+  useEffect(() => {
+    const fetchUserPlaces = async () => {
+      try {
+        const responseData = await sendRequest(
+          `http://localhost:5000/api/places/user/${userId}`
+        );
+
+        setLoadedUserPlaces(responseData.places);
+      } catch (err) {
+        // Error is handeled in the sendRequest useHttpClient hook
+        // Could also use a .then() instead of try/catch
+      }
+    };
+
+    fetchUserPlaces();
+  }, [sendRequest, userId]); // Need to pass sendRequest into useEffect as a dependency
+
+  return (
+    <React.Fragment>
+      <ErrorModal error={error} onClear={clearError} />
+      {isLoading && (
+        <div className="center">
+          <LoadingSpinner />
+        </div>
+      )}
+      {!isLoading && loadedUserPlaces && <PlaceList items={loadedUserPlaces} />}
+    </React.Fragment>
+  );
 };
 
 export default UserPlaces;
