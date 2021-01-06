@@ -6,13 +6,14 @@ import {
   Switch
 } from 'react-router-dom';
 
+import { AuthContext } from './shared/context/auth-context';
+
 import Auth from './user/pages/Auth';
 import Users from './user/pages/Users';
 import UserPlaces from './places/pages/UserPlaces';
 import NewPlace from './places/pages/NewPlace';
 import UpdatePlace from './places/pages/UpdatePlace';
 import MainNavigation from './shared/components/Navigation/MainNavigation';
-import { AuthContext } from './shared/context/auth-context';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

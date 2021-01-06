@@ -1,6 +1,8 @@
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 
+import { AuthContext } from '../../shared/context/auth-context';
+
 import Input from '../../shared/components/FormElements/Input';
 import Button from '../../shared/components/FormElements/Button';
 import ErrorModal from '../../shared/components/UIElements/ErrorModal';
@@ -11,8 +13,6 @@ import {
   VALIDATOR_MINLENGTH
 } from '../../shared/util/validators';
 
-import { AuthContext } from '../../shared/context/auth-context';
-
 import { useForm } from '../../shared/hooks/form-hook';
 import { useHttpClient } from '../../shared/hooks/http-hook';
 
@@ -20,9 +20,7 @@ import './PlaceForm.css';
 
 const NewPlace = () => {
   const auth = useContext(AuthContext);
-
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
-
   const [formState, inputChangeHandler] = useForm(
     {
       title: {
@@ -60,6 +58,7 @@ const NewPlace = () => {
           creator: auth.userId
         })
       );
+
       history.push('/');
     } catch (err) {
       // Error is handeled in the sendRequest useHttpClient hook

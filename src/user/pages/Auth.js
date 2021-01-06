@@ -1,5 +1,7 @@
 import React, { useState, useContext } from 'react';
 
+import { AuthContext } from '../../shared/context/auth-context';
+
 import Card from '../../shared/components/UIElements/Card';
 import Input from '../../shared/components/FormElements/Input';
 import Button from '../../shared/components/FormElements/Button';
@@ -7,8 +9,6 @@ import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
 
 import './Auth.css';
-
-import { AuthContext } from '../../shared/context/auth-context';
 
 import {
   VALIDATOR_REQUIRE,
@@ -21,11 +21,8 @@ import { useHttpClient } from '../../shared/hooks/http-hook';
 
 const Auth = () => {
   const auth = useContext(AuthContext);
-
   const [isLoginMode, setIsLoginMode] = useState(true);
-
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
-
   const [formState, inputChangeHandler, setFormData] = useForm(
     {
       email: {
