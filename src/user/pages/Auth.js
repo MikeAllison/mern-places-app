@@ -4,6 +4,7 @@ import { AuthContext } from '../../shared/context/auth-context';
 
 import Card from '../../shared/components/UIElements/Card';
 import Input from '../../shared/components/FormElements/Input';
+import ImageUploader from '../../shared/components/FormElements/ImageUploader';
 import Button from '../../shared/components/FormElements/Button';
 import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
@@ -37,6 +38,35 @@ const Auth = () => {
     false
   );
 
+  const switchModeHandler = () => {
+    if (!isLoginMode) {
+      setFormData(
+        {
+          ...formState.inputs,
+          name: undefined,
+          image: undefined
+        },
+        formState.inputs.email.isValid && formState.inputs.password.isValid
+      );
+    } else {
+      setFormData(
+        {
+          ...formState.inputs,
+          name: {
+            value: '',
+            isValid: false
+          },
+          image: {
+            value: null,
+            isValid: false
+          }
+        },
+        false
+      );
+    }
+    setIsLoginMode((prevMode) => !prevMode);
+  };
+
   const authSubmitHandler = async (event) => {
     event.preventDefault();
 
@@ -60,19 +90,18 @@ const Auth = () => {
         // Could also use a .then() instead of try/catch
       }
     } else {
-      // SIGNIN MODE
+      // SIGNUP MODE
       try {
+        const formData = new FormData();
+        formData.append('name', formState.inputs.name.value);
+        formData.append('image', formState.inputs.image.value);
+        formData.append('email', formState.inputs.email.value);
+        formData.append('password', formState.inputs.password.value);
         const responseData = await sendRequest(
           'http://localhost:5000/api/users/signup',
           'POST',
-          {
-            'Content-Type': 'application/json'
-          },
-          JSON.stringify({
-            name: formState.inputs.name.value,
-            email: formState.inputs.email.value,
-            password: formState.inputs.password.value
-          })
+          {},
+          formData
         );
 
         auth.login(responseData.user.id);
@@ -81,31 +110,6 @@ const Auth = () => {
         // Could also use a .then() instead of try/catch
       }
     }
-  };
-
-  const switchModeHandler = (event) => {
-    if (!isLoginMode) {
-      setFormData(
-        { ...formState.inputs, name: undefined },
-        formState.inputs.email.isValid && formState.inputs.password.isValid
-      );
-    } else {
-      setFormData(
-        {
-          ...formState.inputs,
-          name: {
-            value: '',
-            isValid: false
-          },
-          password: {
-            value: '',
-            isValid: false
-          }
-        },
-        false
-      );
-    }
-    setIsLoginMode((prevMode) => !prevMode);
   };
 
   return (
@@ -119,8 +123,8 @@ const Auth = () => {
         <form onSubmit={authSubmitHandler}>
           {!isLoginMode && (
             <Input
-              id="name"
               element="input"
+              id="name"
               type="text"
               label="Your Name"
               validators={[VALIDATOR_REQUIRE()]}
@@ -128,21 +132,28 @@ const Auth = () => {
               onInput={inputChangeHandler}
             />
           )}
+          {!isLoginMode && (
+            <ImageUploader
+              id="image"
+              center
+              onInput={inputChangeHandler}
+              errorText={'Place provide an image.'}
+            />
+          )}
           <Input
-            id="email"
             element="input"
+            id="email"
             type="text"
             label="Email"
-            validators={[VALIDATOR_REQUIRE(), VALIDATOR_EMAIL()]}
-            errorText="Please enter a valid email address."
+            validators={[VALIDATOR_EMAIL()]}
             onInput={inputChangeHandler}
           />
           <Input
-            id="password"
             element="input"
+            id="password"
             type="password"
             label="Password"
-            validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(10)]}
+            validators={[VALIDATOR_MINLENGTH(10)]}
             errorText="Please enter a password with a minimum of 10 characters."
             onInput={inputChangeHandler}
           />

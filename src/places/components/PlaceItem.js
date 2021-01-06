@@ -47,6 +47,8 @@ const PlaceItem = (props) => {
     }
   };
 
+  const IMG_SERVER = 'http://localhost:5000';
+
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
@@ -87,7 +89,7 @@ const PlaceItem = (props) => {
         <Card className="place-item__content">
           {islLoading && <LoadingSpinner asOverlay />}
           <div className="place-item__image">
-            <img src={props.imageUrl} alt={props.title} />
+            <img src={`${IMG_SERVER}/${props.imagePath}`} alt={props.title} />
           </div>
           <div className="place-item__info">
             <h2>{props.title}</h2>

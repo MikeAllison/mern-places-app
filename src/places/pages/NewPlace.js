@@ -5,6 +5,7 @@ import { AuthContext } from '../../shared/context/auth-context';
 
 import Input from '../../shared/components/FormElements/Input';
 import Button from '../../shared/components/FormElements/Button';
+import ImageUploader from '../../shared/components/FormElements/ImageUploader';
 import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
 
@@ -34,6 +35,10 @@ const NewPlace = () => {
       address: {
         value: '',
         isValid: false
+      },
+      image: {
+        value: '',
+        isValid: false
       }
     },
     false
@@ -44,19 +49,19 @@ const NewPlace = () => {
   const placeSubmitHandler = async (event) => {
     event.preventDefault();
 
+    const formData = new FormData();
+    formData.append('title', formState.inputs.title.value);
+    formData.append('description', formState.inputs.description.value);
+    formData.append('address', formState.inputs.address.value);
+    formData.append('image', formState.inputs.image.value);
+    formData.append('creator', auth.userId);
+
     try {
       await sendRequest(
         'http://localhost:5000/api/places',
         'POST',
-        {
-          'Content-Type': 'application/json'
-        },
-        JSON.stringify({
-          title: formState.inputs.title.value,
-          description: formState.inputs.description.value,
-          address: formState.inputs.address.value,
-          creator: auth.userId
-        })
+        {},
+        formData
       );
 
       history.push('/');
@@ -73,8 +78,8 @@ const NewPlace = () => {
       <form className="place-form" onSubmit={placeSubmitHandler}>
         {isLoading && <LoadingSpinner asOverlay />}
         <Input
-          id="title"
           element="input"
+          id="title"
           type="text"
           label="Title"
           validators={[VALIDATOR_REQUIRE()]}
@@ -82,24 +87,31 @@ const NewPlace = () => {
           onInput={inputChangeHandler}
         />
         <Input
-          id="description"
           element="textarea"
+          id="description"
           label="Description"
           validators={[VALIDATOR_MINLENGTH(5)]}
           errorText="Please enter a valid description (at least 5 characters)."
           onInput={inputChangeHandler}
         />
         <Input
-          id="address"
           element="input"
+          id="address"
           label="Address"
           validators={[VALIDATOR_REQUIRE()]}
           errorText="Please enter a valid address."
           onInput={inputChangeHandler}
         />
-        <Button type="submit" disabled={!formState.isValid}>
-          ADD PLACE
-        </Button>
+        <ImageUploader id="image" center onInput={inputChangeHandler} />
+        <div className="center">
+          <Button
+            type="submit"
+            className="center"
+            disabled={!formState.isValid}
+          >
+            ADD PLACE
+          </Button>
+        </div>
       </form>
     </React.Fragment>
   );

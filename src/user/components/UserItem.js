@@ -6,13 +6,18 @@ import Card from '../../shared/components/UIElements/Card';
 
 import './UserItem.css';
 
+const IMG_SERVER = 'http://localhost:5000';
+
 const UserItem = (props) => {
   return (
     <li className="user-item">
       <Card className="user-item__content">
         <Link to={`${props.id}/places`}>
           <div className="user-item__image">
-            <Avatar imageUrl={props.imageUrl} alt={props.name} />
+            <Avatar
+              imagePath={`${IMG_SERVER}/${props.imagePath}`}
+              alt={props.name}
+            />
           </div>
           <div className="user-item__info">
             <h2>{props.name}</h2>
