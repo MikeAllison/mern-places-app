@@ -84,7 +84,7 @@ const Auth = () => {
           })
         );
 
-        auth.login(responseData.user.id);
+        auth.login(responseData.userId, responseData.token);
       } catch (err) {
         // Error is handeled in the sendRequest useHttpClient hook
         // Could also use a .then() instead of try/catch
@@ -104,7 +104,7 @@ const Auth = () => {
           formData
         );
 
-        auth.login(responseData.user.id);
+        auth.login(responseData.userId, responseData.token);
       } catch (err) {
         // Error is handeled in the sendRequest useHttpClient hook
         // Could also use a .then() instead of try/catch

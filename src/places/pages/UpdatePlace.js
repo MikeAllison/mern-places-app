@@ -98,6 +98,7 @@ const UpdatePlace = () => {
         `http://localhost:5000/api/places/${placeId}`,
         'PATCH',
         {
+          Authorization: `Bearer ${auth.authToken}`,
           'Content-Type': 'application/json'
         },
         JSON.stringify({
